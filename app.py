@@ -15,4 +15,24 @@ def get_data():
 
 
 
+
+
 get_data()
+print("Data filtered successfully!")
+
+
+def fetchActivityByDateAndTime():
+    try:
+        filedered_data = pd.read_csv("filtered_data.csv")
+
+        date_filtered = filedered_data.loc["2025-10-21" :  "2026-08-20"]
+
+        date_filtered.to_csv("date_filtered.csv", index=False)
+
+    except FileExistsError as e:
+        print("Can`t find file!", e)
+
+
+
+fetchActivityByDateAndTime()
+print("Data filtered by date and time successfully!")
