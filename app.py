@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 def get_data():
     try:
         data = pd.read_csv("qa 2.csv")
@@ -23,9 +22,9 @@ def fetchActivityByDateAndTime():
 
         filedered_data["datetime"] = pd.to_datetime(filedered_data["datetime"])
 
-        target_month = "2026-04"
 
-        date_filtered = filedered_data[filedered_data["datetime"].dt.strftime("%Y-%m") == target_month]
+        date_filtered = filedered_data[filedered_data["datetime"] >= pd.Timestamp("2026-05-04 15:00")]
+
 
         date_filtered.to_csv("date_filtered.csv")
 
