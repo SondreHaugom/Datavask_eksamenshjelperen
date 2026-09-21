@@ -1,5 +1,5 @@
 import pandas as pd
-from collections import Counter
+
 
 def get_data():
     try:
@@ -11,8 +11,6 @@ def get_data():
 
     except FileExistsError as e:
         print("Can`t find file!", e)
-
-
 
 
 get_data()
@@ -33,7 +31,6 @@ def fetchActivityByDateAndTime():
 
     except FileExistsError as e:
         print("Can`t find file!", e)
-
 
 
 fetchActivityByDateAndTime()
