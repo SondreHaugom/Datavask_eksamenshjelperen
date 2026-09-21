@@ -9,7 +9,7 @@ def get_data():
 
         df_filtered.to_csv("filtered_data.csv")
 
-    except FileExistsError as e:
+    except FileNotFoundError as e:
         print("Can`t find file!", e)
 
 
@@ -29,7 +29,7 @@ def fetchActivityByDateAndTime():
 
         date_filtered.to_csv("date_filtered.csv")
 
-    except FileExistsError as e:
+    except FileNotFoundError as e:
         print("Can`t find file!", e)
 
 
