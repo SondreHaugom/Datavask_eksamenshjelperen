@@ -27,9 +27,11 @@ def fetchActivityByDateAndTime():
 
         date_filtered = filedered_data[
             (filedered_data["datetime"].dt.strftime("%Y-%m") >= target_month) &
-            (filedered_data["datetime"].dt.strftime("%H:%M") >= "15:00")
+            (
+                (filedered_data["datetime"].dt.strftime("%H:%M") >= "15:00") |
+                (filedered_data["datetime"].dt.dayofweek >= 5)
+            )
         ]
-
 
 
         date_filtered.to_csv("date_filtered.csv", index=False)
@@ -40,6 +42,10 @@ def fetchActivityByDateAndTime():
 
 fetchActivityByDateAndTime()
 print("Data filtered by date and time successfully!")
+
+
+
+
 
 
 
@@ -54,18 +60,19 @@ def diagram():
     # Fjern rader uten gyldig tidspunkt
     diagram_data = diagram_data.dropna(subset=["datetime"])
 
-    # Tell antall spørringer per time (dato + klokkeslett), sortert i tid
-    diagram_data["dato_time"] = diagram_data["datetime"].dt.floor("h")
-    query_count = diagram_data.groupby("dato_time").size().sort_index()
+    # Kategoriser hver spørring som helg eller kveldstid (hverdag)
+    is_weekend = diagram_data["datetime"].dt.dayofweek >= 5
+    diagram_data["kategori"] = is_weekend.map({True: "Helg", False: "Kveldstid (hverdag)"})
 
-    plt.figure(figsize=(10, 6))
-    plt.bar(query_count.index.strftime("%d.%m %H:%M"), query_count.values)
+    query_count = diagram_data["kategori"].value_counts()
 
-    plt.title("Antall spørringer over tid")
-    plt.xlabel("Dato og klokkeslett")
+    plt.figure(figsize=(8, 6))
+    plt.bar(query_count.index, query_count.values, color=["#4C72B0", "#DD8452"])
+
+    plt.title("Spørringer utenfor arbeidstid: helg vs. kveldstid")
+    plt.xlabel("Kategori")
     plt.ylabel("Antall spørringer")
 
-    plt.xticks(rotation=45)
     plt.tight_layout()
     plt.show()
 
