@@ -1,12 +1,15 @@
 import pandas as pd
+from collections import Counter
 
 def get_data():
-    data = pd.read_csv("qa 2.csv")
-    if data.empty:
-        print("No data found.")
-    else:
-        return data
+    try:
+        data = pd.read_csv("qa 2.csv")
 
+        df_filtered = data.drop(columns=["id", "datetime", "title", "bot_response"])
 
-def get_question():
-    filtered_colums = ["id", "title", "user_question", ]
+        df_filtered.to_csv("filtered_data.csv",  index=False)
+
+    except FileExistsError as e:
+        print("Can`t find file!", e)
+
+get_data()
