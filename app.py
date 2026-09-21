@@ -54,14 +54,15 @@ def diagram():
     # Fjern rader uten gyldig tidspunkt
     diagram_data = diagram_data.dropna(subset=["datetime"])
 
-    # Tell antall spørringer per tidspunkt
-    query_count = diagram_data.groupby("datetime").size()
+    # Tell antall spørringer per time (dato + klokkeslett), sortert i tid
+    diagram_data["dato_time"] = diagram_data["datetime"].dt.floor("h")
+    query_count = diagram_data.groupby("dato_time").size().sort_index()
 
     plt.figure(figsize=(10, 6))
-    plt.plot(query_count.index, query_count.values, marker="o")
+    plt.bar(query_count.index.strftime("%d.%m %H:%M"), query_count.values)
 
     plt.title("Antall spørringer over tid")
-    plt.xlabel("Tidspunkt")
+    plt.xlabel("Dato og klokkeslett")
     plt.ylabel("Antall spørringer")
 
     plt.xticks(rotation=45)
