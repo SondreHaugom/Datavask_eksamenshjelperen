@@ -7,12 +7,10 @@ def get_data():
 
         df_filtered = data.drop(columns=["id", "title", "bot_response", "user_question"])
 
-        df_filtered.to_csv("filtered_data.csv",  index=False)
+        df_filtered.to_csv("filtered_data.csv")
 
     except FileExistsError as e:
         print("Can`t find file!", e)
-
-
 
 
 
@@ -25,9 +23,13 @@ def fetchActivityByDateAndTime():
     try:
         filedered_data = pd.read_csv("filtered_data.csv")
 
-        date_filtered = filedered_data.loc["2025-10-21" :  "2026-08-20"]
+        filedered_data["datetime"] = pd.to_datetime(filedered_data["datetime"])
 
-        date_filtered.to_csv("date_filtered.csv", index=False)
+        target_month = "2026-04"
+
+        date_filtered = filedered_data[filedered_data["datetime"].dt.strftime("%Y-%m") == target_month]
+
+        date_filtered.to_csv("date_filtered.csv")
 
     except FileExistsError as e:
         print("Can`t find file!", e)
