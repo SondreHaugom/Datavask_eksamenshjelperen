@@ -62,16 +62,33 @@ def diagram():
 
     # Kategoriser hver spørring som helg eller kveldstid (hverdag)
     is_weekend = diagram_data["datetime"].dt.dayofweek >= 5
-    diagram_data["kategori"] = is_weekend.map({True: "Helg", False: "Kveldstid (hverdag)"})
+    diagram_data["kategori"] = is_weekend.map({True: "Helg", False: "Kveldstid (hverdag, etter kl. 15)"})
 
     query_count = diagram_data["kategori"].value_counts()
+    query_count = query_count.reindex(
+        ["Kveldstid (hverdag, etter kl. 15)", "Helg"], fill_value=0
+    )
 
-    plt.figure(figsize=(8, 6))
-    plt.bar(query_count.index, query_count.values, color=["#4C72B0", "#DD8452"])
+    periode_start = diagram_data["datetime"].min().strftime("%d.%m.%Y")
+    periode_slutt = diagram_data["datetime"].max().strftime("%d.%m.%Y")
 
-    plt.title("Spørringer utenfor arbeidstid: helg vs. kveldstid")
-    plt.xlabel("Kategori")
-    plt.ylabel("Antall spørringer")
+    farger = ["#2a78d6", "#eb6834"]
+    etiketter = ["Kveldstid\n(man–fre, etter kl. 15)", "Helg\n(lør–søn, hele døgnet)"]
+
+    _, ax = plt.subplots(figsize=(8, 6))
+    stolper = ax.bar(etiketter, query_count.values, color=farger)
+
+    # Vis antall over hver stolpe
+    ax.bar_label(stolper, padding=3, fontsize=11, fontweight="bold")
+
+    ax.set_title("Spørringer utenfor arbeidstid: helg vs. kveldstid")
+    ax.text(
+        0.5, 1.02,
+        f"Periode: {periode_start} – {periode_slutt}",
+        transform=ax.transAxes, ha="center", fontsize=9, color="#52514e",
+    )
+    ax.set_xlabel("Kategori")
+    ax.set_ylabel("Antall spørringer")
 
     plt.tight_layout()
     plt.show()
